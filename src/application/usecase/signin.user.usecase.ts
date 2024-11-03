@@ -1,6 +1,6 @@
-import { User } from "../../domain/entities/user.entity";
-import { UserSignInDTO } from "../dtos/user.dtos";
-import { UserRepository } from "../interfaces/user.repository";
+import { User } from "../../domain/entity/user.entity";
+import { UserSignInDTO } from "../dto/user.dto"
+import { UserRepository } from "../interface/user.repository";
 
 
 export class UserSignInUseCase {

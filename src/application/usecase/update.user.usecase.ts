@@ -1,6 +1,6 @@
-import { UserRepository } from "../interfaces/user.repository";
-import { UserUpdateDTO } from "../dtos/user.dtos";
-import { User } from "../../domain/entities/user.entity";
+import { UserRepository } from "../interface/user.repository";
+import { UserUpdateDTO } from "../dto/user.dto"
+import { User } from "../../domain/entity/user.entity";
 
 
 export class UserUpdateUseCase {

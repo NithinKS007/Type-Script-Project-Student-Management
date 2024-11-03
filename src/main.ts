@@ -1,15 +1,18 @@
 import express from "express";
 import dotenv from "dotenv";
 import connectDB from "./infrastructure/database/mongoose";
-import student from "./presentation/routes/student.routes";
+import student from "./presentation/route/student.routes";
+import cookieParser from "cookie-parser";
+
 
 dotenv.config();
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
-
+app.use(cookieParser())
 app.use("/api/students",student)
+
 
 const PORT = process.env.PORT;
 

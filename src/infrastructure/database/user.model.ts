@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { UserRole } from "../../domain/entities/user.entity";
+import { UserRole } from "../../domain/entity/user.entity";
 
 export interface UserDocument extends Document {
   fname: string;

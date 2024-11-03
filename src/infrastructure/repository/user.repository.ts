@@ -1,8 +1,8 @@
-import { UserRepository } from "../../application/interfaces/user.repository";
+import { UserRepository } from "../../application/interface/user.repository";
 import userModel from "../database/user.model";
-import { User } from "../../domain/entities/user.entity";
-import { UserCreateDTO, UserSignInDTO, UserUpdateDTO } from "../../application/dtos/user.dtos";
-import { comparePassword } from "../../shared/hash/hash.password";
+import { User } from "../../domain/entity/user.entity";
+import { UserCreateDTO, UserSignInDTO, UserUpdateDTO } from "../../application/dto/user.dto";
+import { comparePassword } from "../../shared/hash.password";
 
 
 export class UserRepositoryImpl implements UserRepository {
@@ -42,7 +42,7 @@ export class UserRepositoryImpl implements UserRepository {
         console.log("Invalid password for user:", data.email);
         return null;
     }
-
+      
       return user
     
     }
@@ -50,6 +50,11 @@ export class UserRepositoryImpl implements UserRepository {
     async findByEmail(email: string): Promise<User | null> {
         
         return await userModel.findOne({email:email})
+    }
+    
+    async findById(id:string) : Promise<User | null> {
+
+        return await userModel.findById(id)
     }
 
     async update(data:UserUpdateDTO ,id: string ): Promise <User | null> {
