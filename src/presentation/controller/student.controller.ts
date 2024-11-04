@@ -12,8 +12,8 @@ import { IUserAuthInfoRequest } from "../../application/dto/user.dto";
 const userRepository = new UserRepositoryImpl();
 const createStudentUseCase = new UserCreateUseCase(userRepository);
 const signInStudentUseCase = new UserSignInUseCase(userRepository);
-const updateStudentUseCase = new UserUpdateUseCase(userRepository)
-const getStudentProfile = new UserDetails(userRepository)
+const updateStudentProfileUseCase = new UserUpdateUseCase(userRepository)
+const getStudentProfileUseCase = new UserDetails(userRepository)
 
 export class StudentController {
 
@@ -23,22 +23,22 @@ export class StudentController {
       const existingStudent = await userRepository.findByEmail(req.body.email)
 
       if (existingStudent) {
-         res.status(400).json({ success: false, message: "This email already exists" });
+        res.status(400).json({ success: false, message: "Email already exists" });
          return;
       }
       const hashedPassword = await hashPassword(req.body.password);
 
-      const student = await createStudentUseCase.execute({...req.body,password: hashedPassword,});
+      const student = await createStudentUseCase.execute({...req.body,password: hashedPassword});
 
       const { password, ...otherDetails } = student;
 
-      res.status(201).json({student:otherDetails,success:true,message:"successfully created"})
+      res.status(201).json({ success: true, message: "Student created successfully.", student: otherDetails });
 
     } catch (error) {
 
-      console.error("Error in signup:", error);
+      console.log("Error in student signup:", error);
 
-      res.status(400).json({ error: "Failed to create user" });
+      res.status(500).json({ success: false, message: "Failed to create student. Please try again" });
       
     }
   }
@@ -48,10 +48,9 @@ export class StudentController {
 
       const { email, password } = req.body;
 
-
       const student = await signInStudentUseCase.execute({email,password})
 
-      if (student === null) {
+      if (!student) {
         res.status(401).json({ success: false, message: "Invalid email or password" });
         return; 
       }
@@ -71,75 +70,76 @@ export class StudentController {
 
       const { password: _, ...otherDetails } = student;
       
-      res.status(200).json({success:true, message:"Login successfull", student:otherDetails})
+      res.status(200).json({ success: true, message: "Login successful", student: otherDetails });
 
     } catch (error) {
 
-      res.status(400).json({ error: "Failed to signin for student"});
+      console.log("Error in signin student ",error);
+      res.status(500).json({ success: false, message: "Failed to sign in. Please try again" });
       
     }
   }
 
-  static async getProfile (req:IUserAuthInfoRequest,res:Response):Promise<void> {
+  static async getStudentProfile (req:IUserAuthInfoRequest,res:Response):Promise<void> {
 
       try {
 
         const userId =  req.user?.userId
 
-        console.log(`userId received for loading user profile`,userId)
-
         if(!userId) {
 
-          res.status(401).json({ success: false, message: "Unauthorized" });
+          res.status(403).json({ success: false, message: "Access denied. Unauthorized" });
           
           return
         }
 
-        const studentDetails = await getStudentProfile.execute(userId)
+        const studentDetails = await getStudentProfileUseCase.execute(userId)
 
         if(!studentDetails) {
 
-           res.status(404).json({success:false,message:"User not found"})
+          res.status(404).json({ success: false, message: "Student not found" });
 
            return
         }
 
-        res.status(200).json({success:true,user:studentDetails})
+        res.status(200).json({ success: true, student: studentDetails });
         
       } catch (error) {
 
-           res.status(400).json({error:"Cannot get user details"})
+        console.log("Error fetching student details",error);
+        
+        res.status(500).json({ success: false, message: "Cannot retrieve student details. Please try again" });
       }
   }
-  static async updateDetails(req:IUserAuthInfoRequest, res:Response): Promise<void> {
+  static async updateStudentProfile(req:IUserAuthInfoRequest, res:Response): Promise<void> {
 
      try {
 
         const userId = req.user?.userId
         const userData = req.body
 
-        console.log(`Updating user: ${req.user?.userId}`);
-
         if(!userId) {
 
-          res.status(401).json({ success: false, message: "Unauthorized" });
+          res.status(403).json({ success: false, message: "Access denied. Unauthorized" });
           return
 
         }
-        const updatedStudent = await  updateStudentUseCase.execute(userData,userId)
+        const updatedStudent = await  updateStudentProfileUseCase.execute(userData,userId)
 
         if (!updatedStudent) {
-          res.status(404).json({ success: false, message: "User not found" });
+          res.status(404).json({ success: false, message: "Student not found" });
           return;
       }
 
       const { password, ...otherDetails } = updatedStudent;
 
-      res.status(200).json({ success: true, user: otherDetails });
+      res.status(200).json({ success: true, student: otherDetails });
 
      } catch (error) {
       
-       res.status(400).json({error:"Failed to update user details"})
+       console.log("Error updating student details");
+      
+       res.status(500).json({ success: false, message: "Failed to update student details. Please try again" });
      }
   }
 
@@ -154,7 +154,9 @@ export class StudentController {
           return
       } catch (error) {
         
-          res.status(400).json({ error: "Failed to logout" });
+          console.log("Error in signin out student");
+          
+          res.status(500).json({ success: false, message: "Failed to logout. Please try again" });
       }
   }
   

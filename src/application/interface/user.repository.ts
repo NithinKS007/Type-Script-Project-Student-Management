@@ -7,4 +7,6 @@ export interface UserRepository {
   findByEmail(email:string) : Promise<User | null>
   update(data: UserUpdateDTO,id: string ): Promise<User | null>;
   findById(id:string):Promise <User | null>
+  findAll():Promise <User[] | null>
+  delete(id:string):Promise <User | null>
 }

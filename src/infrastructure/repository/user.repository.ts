@@ -9,9 +9,8 @@ export class UserRepositoryImpl implements UserRepository {
 
      async signup(data: UserCreateDTO): Promise < User > {
 
-        const { fname, lname, email, phone, password, dateOfBirth, address } = data
+        const { fname, lname, email, phone, password, dateOfBirth, address ,role } = data
 
-        const role = data.role || "user"
         const user = new userModel({
             fname,
             lname,
@@ -62,6 +61,19 @@ export class UserRepositoryImpl implements UserRepository {
         const updatedData = await userModel.findByIdAndUpdate(id,data,{ new: true })
 
         return updatedData
+    }
+    async findAll(): Promise<User[] | null> {
+      
+      const allUsers = await userModel.find()
+
+      return allUsers
+    }
+    
+    async delete(id:string):Promise<User | null> {
+
+        const deletedUser = await userModel.findByIdAndDelete(id)
+
+        return deletedUser
     }
 
 }

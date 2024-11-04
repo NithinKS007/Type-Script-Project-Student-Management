@@ -16,6 +16,8 @@ export const verifyToken = (token:string) =>{
 
    const decoded = jwt.verify(token,secret) 
 
+   console.log(decoded,"decorde");
+   
    return decoded
 
 }
