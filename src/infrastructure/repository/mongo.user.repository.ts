@@ -5,7 +5,7 @@ import { UserCreateDTO, UserSignInDTO, UserUpdateDTO } from "../../application/d
 import { comparePassword } from "../../shared/hash.password";
 
 
-export class UserRepositoryImpl implements UserRepository {
+export class MongoUserRepository implements UserRepository {
 
      async signup(data: UserCreateDTO): Promise < User > {
 

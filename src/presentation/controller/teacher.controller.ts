@@ -1,7 +1,7 @@
 import { Request,Response } from "express";
 import { UserCreateUseCase } from "../../application/usecase/signup.user.usecase";
 import { UserSignInUseCase } from "../../application/usecase/signin.user.usecase";
-import { UserRepositoryImpl } from "../../infrastructure/repository/user.repository";
+import { MongoUserRepository } from "../../infrastructure/repository/mongo.user.repository";
 import { UserUpdateUseCase } from "../../application/usecase/update.user.usecase"
 import { UserDetails } from "../../application/usecase/find.user.usecase"
 import { FindAllUsers } from "../../application/usecase/find.all.user.usecase"
@@ -10,7 +10,7 @@ import { hashPassword } from "../../shared/hash.password";
 import { generateToken } from "../../infrastructure/auth/jwtService";
 import { IUserAuthInfoRequest } from "../../application/dto/user.dto";
 
-const userRepository = new UserRepositoryImpl()
+const userRepository = new MongoUserRepository()
 const createTeacherUseCase = new UserCreateUseCase(userRepository)
 const signinTeacherUseCase = new UserSignInUseCase(userRepository)
 const getTeacherProfileUseCase = new UserDetails(userRepository)
