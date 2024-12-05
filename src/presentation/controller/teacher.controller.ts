@@ -6,6 +6,7 @@ import { UserUpdateUseCase } from "../../application/usecase/update.user.usecase
 import { UserDetails } from "../../application/usecase/find.user.usecase"
 import { FindAllUsers } from "../../application/usecase/find.all.user.usecase"
 import { DeleteUser } from "../../application/usecase/delete.user.usecase"
+import { findUserByEmail } from "../../application/usecase/find.by.email.user";
 import { hashPassword } from "../../shared/hash.password";
 import { generateToken } from "../../infrastructure/auth/jwtService";
 import { IUserAuthInfoRequest } from "../../application/dto/user.dto";
@@ -18,6 +19,7 @@ const updateTeacherProfileUseCase = new UserUpdateUseCase(userRepository)
 const getAllUsersUseCase = new FindAllUsers(userRepository)
 const updateStudentDetailsUseCase = new UserUpdateUseCase(userRepository)
 const deleteStudentUseCase = new DeleteUser(userRepository)
+const findTeacherByEmailUseCase = new findUserByEmail(userRepository)
 
 
 export class TeacherController {
@@ -26,7 +28,7 @@ export class TeacherController {
 
         try {
 
-            const existingTeacher = await userRepository.findByEmail(req.body.email)
+            const existingTeacher = await findTeacherByEmailUseCase.execute(req.body.email)
 
             if(existingTeacher) {
 

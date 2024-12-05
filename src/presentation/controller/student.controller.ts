@@ -7,6 +7,7 @@ import { MongoUserRepository } from "../../infrastructure/repository/mongo.user.
 import { hashPassword } from "../../shared/hash.password";
 import { generateToken } from "../../infrastructure/auth/jwtService";
 import { IUserAuthInfoRequest } from "../../application/dto/user.dto";
+import { findUserByEmail } from "../../application/usecase/find.by.email.user";
 
 
 const userRepository = new MongoUserRepository();
@@ -14,13 +15,14 @@ const createStudentUseCase = new UserCreateUseCase(userRepository);
 const signInStudentUseCase = new UserSignInUseCase(userRepository);
 const updateStudentProfileUseCase = new UserUpdateUseCase(userRepository)
 const getStudentProfileUseCase = new UserDetails(userRepository)
+const findStudentByEmailUseCase = new findUserByEmail(userRepository)
 
 export class StudentController {
 
   static async signup(req: Request, res: Response): Promise<void> {
     try {
 
-      const existingStudent = await userRepository.findByEmail(req.body.email)
+      const existingStudent = await findStudentByEmailUseCase.execute(req.body.email)
 
       if (existingStudent) {
         res.status(400).json({ success: false, message: "Email already exists" });
